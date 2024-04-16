@@ -4,32 +4,50 @@
 #include <iostream>
 using namespace std;
 
+/*
+ * Camden Harris
+ * Spring 2024, CS212, William Iverson
+ * 04/15/2024
+ * Program 3
+ * Calendar Date Data Structure
+ */
+
 class CalendarDate {
     
     int month, day, year;
 
     public:
-        CalendarDate::CalendarDate(int m, int d, int y) {
+        // main constructor for date
+        CalendarDate(int m, int d, int y) {
             month = m;
             day = d;
             year = y;
         }
+
+        // returns a string in the MM/DD/YYYY format (e.g 1/1/1970)
         string ToString() { return (to_string(month) + "/" + to_string(day) + "/" + to_string(year)); }
-        const CalendarDate& CalendarDate::operator++() {
+
+        // prefix ++ operator, adds one to year
+        const CalendarDate& operator++() {
             ++(this->year);
             return *this;
         }
 
-        const CalendarDate CalendarDate::operator++(int) {
+        // postfix ++ operator, adds one to year 
+        const CalendarDate operator++(int) {
             CalendarDate temp(*this);
             ++(this->year);
             return temp;
         }
+
+        // less than comparison operator
         bool operator<(const CalendarDate& other) const {
             if (year != other.year) return year < other.year;
             if (month != other.month) return month < other.month;
             return day < other.day;
         }
+
+        // << operator, used to print long date (e.g January, 1, 1970)
         friend ostream& operator<<(ostream& os, const CalendarDate& date) {
             string month_string;
             switch(date.month) {
@@ -51,7 +69,5 @@ class CalendarDate {
         }
 
 };
-
-
 
 #endif
