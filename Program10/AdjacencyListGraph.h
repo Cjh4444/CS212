@@ -6,6 +6,14 @@ Frank Vahid / Professor of Computer Science and Engineering / Univ.of California
 February 2024
 */
 
+/*
+ * Camden Harris
+ * Spring 2024, CS212, William Iverson
+ * 06/02/2024
+ * Program 10
+ * Adjacency List Graph Data Structure
+ */
+
 #ifndef ADJACENCYLISTGRAPH_H
 #define ADJACENCYLISTGRAPH_H
 
@@ -23,6 +31,14 @@ public:
       }
    }
 
+   // simple conversion function to find the ALV equivalent for a given passed in vertex
+   AdjacencyListVertex* findEquivalentAdjacencyListVertex(Vertex* baseVertex) {
+      for(AdjacencyListVertex* ALVertex : vertices)
+         if (baseVertex->GetLabel() == ALVertex->GetLabel()) return ALVertex;
+      
+      return nullptr;
+   }
+
    // Creates and adds a new vertex to the graph, provided a vertex with the
    // same label doesn't already exist in the graph. Returns the new vertex on
    // success, nullptr on failure.
@@ -38,22 +54,10 @@ public:
    // already exists in the graph, no change is made and false is returned.
    // Otherwise the new edge is added and true is returned.
    virtual bool AddDirectedEdge(Vertex* fromVertex, Vertex* toVertex) override {
-      AdjacencyListVertex* adjFromVertex = nullptr;
-      for(AdjacencyListVertex* vertex : vertices) {
-         if (vertex->GetLabel() == fromVertex->GetLabel()) {
-            adjFromVertex = vertex;
-            break;
-         } 
-      }
+      AdjacencyListVertex* adjFromVertex = findEquivalentAdjacencyListVertex(fromVertex);
       if(!adjFromVertex) return false;
 
-      AdjacencyListVertex* adjToVertex = nullptr;
-      for(AdjacencyListVertex* vertex : vertices) {
-         if (vertex->GetLabel() == toVertex->GetLabel()) {
-            adjToVertex = vertex;
-            break;
-         } 
-      }
+      AdjacencyListVertex* adjToVertex = findEquivalentAdjacencyListVertex(toVertex);
       if(!adjToVertex) return false;
 
       for (Vertex* vertex : adjFromVertex->adjacent)
@@ -67,13 +71,7 @@ public:
    virtual std::vector<Edge> GetEdgesFrom(Vertex* fromVertex) override {
       std::vector<Edge> edges;
 
-      AdjacencyListVertex* adjFromVertex = nullptr;
-      for(AdjacencyListVertex* vertex : vertices) {
-         if (vertex->GetLabel() == fromVertex->GetLabel()) {
-            adjFromVertex = vertex;
-            break;
-         } 
-      }
+      AdjacencyListVertex* adjFromVertex = findEquivalentAdjacencyListVertex(fromVertex);
       if(!adjFromVertex) return edges;
 
       for (Vertex* vertex : adjFromVertex->adjacent) 
@@ -86,21 +84,13 @@ public:
    virtual std::vector<Edge> GetEdgesTo(Vertex* toVertex) override {
       std::vector<Edge> edges;
 
-      AdjacencyListVertex* adjToVertex = nullptr;
-      for(AdjacencyListVertex* vertex : vertices) {
-         if (vertex->GetLabel() == toVertex->GetLabel()) {
-            adjToVertex = vertex;
-            break;
-         } 
-      }
+      AdjacencyListVertex* adjToVertex = findEquivalentAdjacencyListVertex(toVertex);
       if(!adjToVertex) return edges;
 
-      for (AdjacencyListVertex* vertex : vertices) {
-         for (Vertex* adjVertex : vertex->adjacent) {
+      for (AdjacencyListVertex* vertex : vertices)
+         for (Vertex* adjVertex : vertex->adjacent)
             if (adjVertex->GetLabel() == adjToVertex->GetLabel())
-            edges.push_back(Edge(vertex, adjToVertex));
-         }
-      }
+               edges.push_back(Edge(vertex, adjToVertex));
 
       return edges;
    }
@@ -115,27 +105,14 @@ public:
     
    // Returns true if this graph has an edge from fromVertex to toVertex
    virtual bool HasEdge(Vertex* fromVertex, Vertex* toVertex) override {
-      AdjacencyListVertex* adjFromVertex = nullptr;
-      for(AdjacencyListVertex* vertex : vertices) {
-         if (vertex->GetLabel() == fromVertex->GetLabel()) {
-            adjFromVertex = vertex;
-            break;
-         } 
-      }
+      AdjacencyListVertex* adjFromVertex = findEquivalentAdjacencyListVertex(fromVertex);
       if(!adjFromVertex) return false;
 
-      AdjacencyListVertex* adjToVertex = nullptr;
-      for(AdjacencyListVertex* vertex : vertices) {
-         if (vertex->GetLabel() == toVertex->GetLabel()) {
-            adjToVertex = vertex;
-            break;
-         } 
-      }
+      AdjacencyListVertex* adjToVertex = findEquivalentAdjacencyListVertex(toVertex);
       if(!adjToVertex) return false;
 
-      for(Vertex* vertex : adjFromVertex->adjacent) {
+      for(Vertex* vertex : adjFromVertex->adjacent)
          if (vertex->GetLabel() == adjToVertex->GetLabel()) return true;
-      }
 
       return false;
    }
