@@ -31,20 +31,11 @@ public:
       }
    }
 
-   // simple conversion function to find the ALV equivalent for a given passed in vertex
-   AdjacencyListVertex* findEquivalentAdjacencyListVertex(Vertex* baseVertex) {
-      for(AdjacencyListVertex* ALVertex : vertices)
-         if (baseVertex->GetLabel() == ALVertex->GetLabel()) return ALVertex;
-      
-      return nullptr;
-   }
-
    // Creates and adds a new vertex to the graph, provided a vertex with the
    // same label doesn't already exist in the graph. Returns the new vertex on
    // success, nullptr on failure.
    virtual Vertex* AddVertex(std::string newVertexLabel) override {
-      for(AdjacencyListVertex* vertex : vertices) 
-         if (vertex->GetLabel() == newVertexLabel) return nullptr;
+      if (GetVertex(newVertexLabel)) return nullptr;
       
       vertices.push_back(new AdjacencyListVertex(newVertexLabel));
       return vertices.back();
@@ -54,10 +45,10 @@ public:
    // already exists in the graph, no change is made and false is returned.
    // Otherwise the new edge is added and true is returned.
    virtual bool AddDirectedEdge(Vertex* fromVertex, Vertex* toVertex) override {
-      AdjacencyListVertex* adjFromVertex = findEquivalentAdjacencyListVertex(fromVertex);
+      AdjacencyListVertex* adjFromVertex = GetVertex(fromVertex->GetLabel());
       if(!adjFromVertex) return false;
 
-      AdjacencyListVertex* adjToVertex = findEquivalentAdjacencyListVertex(toVertex);
+      AdjacencyListVertex* adjToVertex = GetVertex(toVertex->GetLabel());
       if(!adjToVertex) return false;
 
       for (Vertex* vertex : adjFromVertex->adjacent)
@@ -71,7 +62,7 @@ public:
    virtual std::vector<Edge> GetEdgesFrom(Vertex* fromVertex) override {
       std::vector<Edge> edges;
 
-      AdjacencyListVertex* adjFromVertex = findEquivalentAdjacencyListVertex(fromVertex);
+      AdjacencyListVertex* adjFromVertex = GetVertex(fromVertex->GetLabel());
       if(!adjFromVertex) return edges;
 
       for (Vertex* vertex : adjFromVertex->adjacent) 
@@ -84,7 +75,7 @@ public:
    virtual std::vector<Edge> GetEdgesTo(Vertex* toVertex) override {
       std::vector<Edge> edges;
 
-      AdjacencyListVertex* adjToVertex = findEquivalentAdjacencyListVertex(toVertex);
+      AdjacencyListVertex* adjToVertex = GetVertex(toVertex->GetLabel());
       if(!adjToVertex) return edges;
 
       for (AdjacencyListVertex* vertex : vertices)
@@ -97,7 +88,7 @@ public:
     
    // Returns a vertex with a matching label, or nullptr if no such vertex
    // exists
-   virtual Vertex* GetVertex(std::string vertexLabel) override {
+   virtual AdjacencyListVertex* GetVertex(std::string vertexLabel) override {
       for(AdjacencyListVertex* vertex : vertices ) 
          if (vertex->GetLabel() == vertexLabel) return vertex;
       return nullptr;
@@ -105,10 +96,10 @@ public:
     
    // Returns true if this graph has an edge from fromVertex to toVertex
    virtual bool HasEdge(Vertex* fromVertex, Vertex* toVertex) override {
-      AdjacencyListVertex* adjFromVertex = findEquivalentAdjacencyListVertex(fromVertex);
+      AdjacencyListVertex* adjFromVertex = GetVertex(fromVertex->GetLabel());
       if(!adjFromVertex) return false;
 
-      AdjacencyListVertex* adjToVertex = findEquivalentAdjacencyListVertex(toVertex);
+      AdjacencyListVertex* adjToVertex = GetVertex(toVertex->GetLabel());
       if(!adjToVertex) return false;
 
       for(Vertex* vertex : adjFromVertex->adjacent)
